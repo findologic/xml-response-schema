@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!--                    -->
+    <!-- Document structure -->
+    <!--                    -->
+
+    <xs:element name="searchResult">
+        <xs:complexType>
+            <xs:sequence>
+                <!-- The servers involved in the request. -->
+                <xs:element name="servers">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <!-- The API layer endpoint behind service.findologic.com processing the request. -->
+                            <xs:element name="frontend" type="server"/>
+                            <!-- The search server handling the request. -->
+                            <xs:element name="backend" type="server"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- The parameters controlling the search result. -->
+                <xs:element name="query">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <!-- Pagination settings. -->
+                            <xs:element name="limit">
+                                <xs:complexType>
+                                    <xs:attribute name="first" type="xs:nonNegativeInteger" use="required"/>
+                                    <xs:attribute name="count" type="xs:positiveInteger" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+
+                            <!-- The user query or alternative queries determined by SDYM. -->
+                            <xs:element name="queryString">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:string">
+                                            <xs:attribute name="type">
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:enumeration value="corrected"/>
+                                                        <xs:enumeration value="improved"/>
+                                                        <xs:enumeration value="forced"/>
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:attribute>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+                            </xs:element>
+
+                            <!-- Returned in case the user query is overridden by SDYM. -->
+                            <xs:element name="originalQuery" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:string">
+                                            <xs:attribute name="allow-override" type="xs:int"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+                            </xs:element>
+
+                            <!-- Alternative query suggested by SDYM. -->
+                            <xs:element name="didYouMeanQuery" type="xs:string" minOccurs="0"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- URL to a landingpage, in case the query matches a configured one. -->
+                <xs:element name="landingPage" minOccurs="0">
+                    <xs:complexType>
+                        <xs:attribute name="link" type="xs:anyURI"/>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- URL of a promotion and its image, in case the query matches a configured one. -->
+                <xs:element name="promotion" minOccurs="0">
+                    <xs:complexType>
+                        <xs:attribute name="link" type="xs:anyURI"/>
+                        <xs:attribute name="image" type="xs:anyURI"/>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Result metadata. -->
+                <xs:element name="results">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <!-- Number of found products with the effective query. -->
+                            <xs:element name="count" type="xs:nonNegativeInteger"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- The products matching the query. -->
+                <xs:element name="products">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="product" type="product" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Filters to constrain the search results. -->
+                <xs:element name="filters">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <!-- Filters are separated between main and other. The former should be displayed
+                                 prominently, while the latter can be a little hidden and require user interaction to
+                                 see the available values. -->
+                            <xs:element name="main">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="filter" type="filter" minOccurs="0" maxOccurs="unbounded"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+
+                            <xs:element name="other">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="filter" type="filter" minOccurs="0" maxOccurs="unbounded"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!--                  -->
+    <!-- Type definitions -->
+    <!--                  -->
+
+    <xs:simpleType name="server">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-z0-9.]+"/>
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="product">
+        <xs:sequence>
+            <!-- Properties are only returned if requested via query parameter. -->
+            <xs:element name="properties">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="name" type="xs:string" use="required"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="relevance" type="xs:decimal" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="range">
+        <xs:sequence>
+            <xs:element name="min" type="xs:decimal"/>
+            <xs:element name="max" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="filter">
+        <xs:sequence>
+            <!-- Optional CSS class from filter config. -->
+            <xs:element name="cssClass" type="xs:string" minOccurs="0"/>
+
+            <!-- Optional text from filter config to show when no filter values are available. -->
+            <xs:element name="noAvailableFiltersText" type="xs:string" minOccurs="0"/>
+
+            <!-- Internal name of the filter, as exported. -->
+            <xs:element name="name">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+
+            <!-- Display name of the filter from filter config. -->
+            <xs:element name="display" type="xs:string"/>
+
+            <!-- Whether only one or multiple filter values can be selected at once. -->
+            <xs:element name="select">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="single"/>
+                        <xs:enumeration value="multiple"/>
+                        <xs:enumeration value="multiselect"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+
+            <!-- For multiselect filters, the number of currently selected filter values. -->
+            <xs:element name="selectedItems" type="xs:nonNegativeInteger" minOccurs="0"/>
+
+            <!-- The type of filter visualization to use. -->
+            <xs:element name="type">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="label"/>
+                        <xs:enumeration value="select"/>
+                        <xs:enumeration value="range-slider"/>
+                        <xs:enumeration value="color"/>
+                        <xs:enumeration value="image"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+
+            <!-- For range slider filters, the attributes of the range. -->
+            <xs:element name="attributes" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="selectedRange" type="range"/>
+                        <xs:element name="totalRange" type="range"/>
+                        <xs:element name="stepSize" type="xs:decimal"/>
+                        <xs:element name="unit" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <!-- Available filter values. -->
+            <xs:element name="items">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="item">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="name" type="xs:string"/>
+                                    <xs:element name="weight" type="xs:decimal"/>
+
+                                    <!-- Range filters only: -->
+                                    <xs:element name="parameters" type="range"/>
+
+                                    <!-- For filters other than range filters: -->
+                                    <xs:element name="frequency" type="xs:nonNegativeInteger"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <!-- Color code. -->
+            <xs:element name="color" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="#[0-9A-F]{6}]"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+
+            <!-- Image filter URL. -->
+            <xs:element name="image" type="xs:anyURI" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
