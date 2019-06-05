@@ -145,7 +145,7 @@
     <xs:complexType name="product">
         <xs:sequence>
             <!-- Properties are only returned if requested via query parameter. -->
-            <xs:element name="properties">
+            <xs:element name="properties" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
@@ -180,6 +180,9 @@
 
             <!-- Optional text from filter config to show when no filter values are available. -->
             <xs:element name="noAvailableFiltersText" type="xs:string" minOccurs="0"/>
+
+            <!-- Optional itemCount until a "show more filters" link should appear, only relevant for type "select". -->
+            <xs:element name="itemCount" type="xs:int" minOccurs="0"/>
 
             <!-- Internal name of the filter, as exported. -->
             <xs:element name="name">
@@ -236,17 +239,26 @@
             <xs:element name="items">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="item">
+                        <xs:element name="item" minOccurs="0" maxOccurs="unbounded">
                             <xs:complexType>
                                 <xs:sequence>
                                     <xs:element name="name" type="xs:string"/>
                                     <xs:element name="weight" type="xs:decimal"/>
 
-                                    <!-- Range filters only: -->
-                                    <xs:element name="parameters" type="range"/>
+                                    <!-- For range filters only. -->
+                                    <xs:element name="parameters" type="range" minOccurs="0"/>
 
-                                    <!-- For filters other than range filters: -->
-                                    <xs:element name="frequency" type="xs:nonNegativeInteger"/>
+                                    <!-- For filters other than range filters. -->
+                                    <xs:element name="frequency" type="xs:nonNegativeInteger" minOccurs="0"/>
+
+                                    <!-- Category filters may have subfilters -->
+                                    <xs:element name="items" minOccurs="0" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="item" minOccurs="0" maxOccurs="unbounded" />
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
                                 </xs:sequence>
                             </xs:complexType>
                         </xs:element>
@@ -258,7 +270,7 @@
             <xs:element name="color" minOccurs="0">
                 <xs:simpleType>
                     <xs:restriction base="xs:string">
-                        <xs:pattern value="#[0-9A-F]{6}]"/>
+                        <xs:pattern value="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"/>
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
