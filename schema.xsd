@@ -30,7 +30,7 @@
                                     <xs:attribute name="first" type="xs:nonNegativeInteger" use="required"/>
 
                                     <!-- Product count - May be 0 for an initial navigation request. -->
-                                    <xs:attribute name="count" type="xs:integer" use="required"/>
+                                    <xs:attribute name="count" type="xs:nonNegativeInteger" use="required"/>
                                 </xs:complexType>
                             </xs:element>
 
@@ -168,7 +168,7 @@
         <xs:attribute name="relevance" type="xs:decimal" use="required"/>
     </xs:complexType>
 
-    <!-- Range slider filters. Filters "min"/"max" may not have any values if there is nothing to filter for. -->
+    <!-- Range slider filters. Filters "min"/"max" may not have any values if there is nothing to filter. -->
     <xs:complexType name="range">
         <xs:sequence>
             <xs:element name="min">
@@ -306,10 +306,11 @@
                 </xs:complexType>
             </xs:element>
 
-            <!-- Color code. -->
+            <!-- Color code for color filters -->
             <xs:element name="color" minOccurs="0">
                 <xs:simpleType>
                     <xs:restriction base="xs:string">
+                        <!-- Matches color codes such as #FFF, #AAAAAA or #ddCcdD -->
                         <xs:pattern value="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"/>
                     </xs:restriction>
                 </xs:simpleType>
