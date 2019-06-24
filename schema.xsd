@@ -28,7 +28,9 @@
                             <xs:element name="limit">
                                 <xs:complexType>
                                     <xs:attribute name="first" type="xs:nonNegativeInteger" use="required"/>
-                                    <xs:attribute name="count" type="xs:positiveInteger" use="required"/>
+
+                                    <!-- Product count - May be 0 for an initial navigation request. -->
+                                    <xs:attribute name="count" type="xs:nonNegativeInteger" use="required"/>
                                 </xs:complexType>
                             </xs:element>
 
@@ -145,7 +147,7 @@
     <xs:complexType name="product">
         <xs:sequence>
             <!-- Properties are only returned if requested via query parameter. -->
-            <xs:element name="properties">
+            <xs:element name="properties" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
@@ -166,20 +168,38 @@
         <xs:attribute name="relevance" type="xs:decimal" use="required"/>
     </xs:complexType>
 
+    <!-- Range slider filters. Filters "min"/"max" may not have any values if there is nothing to filter. -->
     <xs:complexType name="range">
         <xs:sequence>
-            <xs:element name="min" type="xs:decimal"/>
-            <xs:element name="max" type="xs:decimal"/>
+            <xs:element name="min" type="rangeFilter" />
+            <xs:element name="max" type="rangeFilter" />
         </xs:sequence>
     </xs:complexType>
 
+    <xs:simpleType name="rangeFilter">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base='xs:string'>
+                    <xs:length value='0'/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base='xs:decimal'>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:complexType name="filter">
         <xs:sequence>
+            <!-- Optional itemCount until a "show more filters" link should appear, only relevant for type "select". -->
+            <xs:element name="itemCount" type="xs:int" minOccurs="0" />
+
             <!-- Optional CSS class from filter config. -->
-            <xs:element name="cssClass" type="xs:string" minOccurs="0"/>
+            <xs:element name="cssClass" type="xs:string" minOccurs="0" />
 
             <!-- Optional text from filter config to show when no filter values are available. -->
-            <xs:element name="noAvailableFiltersText" type="xs:string" minOccurs="0"/>
+            <xs:element name="noAvailableFiltersText" type="xs:string" minOccurs="0" />
 
             <!-- Internal name of the filter, as exported. -->
             <xs:element name="name">
@@ -236,17 +256,35 @@
             <xs:element name="items">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="item">
+                        <xs:element name="item" minOccurs="0" maxOccurs="unbounded">
                             <xs:complexType>
                                 <xs:sequence>
                                     <xs:element name="name" type="xs:string"/>
                                     <xs:element name="weight" type="xs:decimal"/>
 
-                                    <!-- Range filters only: -->
-                                    <xs:element name="parameters" type="range"/>
+                                    <!-- For filters other than range filters. -->
+                                    <xs:element name="frequency" type="xs:nonNegativeInteger" minOccurs="0" />
 
-                                    <!-- For filters other than range filters: -->
-                                    <xs:element name="frequency" type="xs:nonNegativeInteger"/>
+                                    <!-- Category filters may have subfilters -->
+                                    <xs:element name="items" minOccurs="0" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="item" minOccurs="0" maxOccurs="unbounded" />
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+
+                                    <!-- Image filter URL. -->
+                                    <xs:element name="image" type="xs:anyURI" minOccurs="0" />
+
+                                    <!-- Color code for color filters -->
+                                    <xs:element name="color" minOccurs="0" />
+
+                                    <!-- For range filters only. -->
+                                    <xs:element name="parameters" type="range" minOccurs="0" />
+
+                                    <!-- Multiselect filters -->
+                                    <xs:element name="selected" minOccurs="0" />
                                 </xs:sequence>
                             </xs:complexType>
                         </xs:element>
@@ -254,17 +292,21 @@
                 </xs:complexType>
             </xs:element>
 
-            <!-- Color code. -->
+            <!-- Color code for color filters -->
             <xs:element name="color" minOccurs="0">
                 <xs:simpleType>
                     <xs:restriction base="xs:string">
-                        <xs:pattern value="#[0-9A-F]{6}]"/>
+                        <!-- Matches color codes such as #FFF, #AAAAAA or #ddCcdD -->
+                        <xs:pattern value="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"/>
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
 
             <!-- Image filter URL. -->
             <xs:element name="image" type="xs:anyURI" minOccurs="0"/>
+
+            <!-- For range filters only. -->
+            <xs:element name="parameters" type="range" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>
