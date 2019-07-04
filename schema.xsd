@@ -284,7 +284,8 @@
                                     <xs:element name="parameters" type="range" minOccurs="0" />
                                 </xs:sequence>
 
-                                <!-- If a filter was selected it automatically gets this attribute. -->
+                                <!-- If a filter was selected it automatically gets this attribute. This works for -->
+                                <!-- all filters except for range-sliders since those are handled differently.     -->
                                 <xs:attribute name="selected" type="xs:boolean" />
                             </xs:complexType>
                         </xs:element>
