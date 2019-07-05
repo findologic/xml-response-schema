@@ -5,11 +5,11 @@ or generating code from it.
 
 ## Available Versions
 
-* 2.1 (in progress, not stable yet)
+* 2.1
 
 ## Usage
 
-The appropriate version of the schema will be available at a GitHub URL for the
+The appropriate version of the schema is available at a GitHub URL for the
 available versions like such:
 
 ```
