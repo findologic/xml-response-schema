@@ -260,7 +260,7 @@
                             <xs:complexType>
                                 <xs:sequence>
                                     <xs:element name="name" type="xs:string"/>
-                                    <xs:element name="weight" type="xs:decimal"/>
+                                    <xs:element name="weight" type="xs:decimal" minOccurs="0"/>
 
                                     <!-- For filters other than range filters. -->
                                     <xs:element name="frequency" type="xs:nonNegativeInteger" minOccurs="0" />
@@ -282,10 +282,11 @@
 
                                     <!-- For range filters only. -->
                                     <xs:element name="parameters" type="range" minOccurs="0" />
-
-                                    <!-- Multiselect filters -->
-                                    <xs:element name="selected" minOccurs="0" />
                                 </xs:sequence>
+
+                                <!-- If a filter was selected it automatically gets this attribute. This works for -->
+                                <!-- all filters except for range-sliders since those are handled differently.     -->
+                                <xs:attribute name="selected" type="xs:boolean" />
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
