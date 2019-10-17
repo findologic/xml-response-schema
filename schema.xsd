@@ -278,7 +278,14 @@
                                     <xs:element name="image" type="xs:anyURI" minOccurs="0" />
 
                                     <!-- Color code for color filters -->
-                                    <xs:element name="color" minOccurs="0" />
+                                    <xs:element name="color" minOccurs="0">
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:string">
+                                                <!-- Matches color codes such as #FFF, #AAAAAA or #ddCcdD -->
+                                                <xs:pattern value="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$" />
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
 
                                     <!-- For range filters only. -->
                                     <xs:element name="parameters" type="range" minOccurs="0" />
@@ -292,22 +299,6 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-
-            <!-- Color code for color filters -->
-            <xs:element name="color" minOccurs="0">
-                <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                        <!-- Matches color codes such as #FFF, #AAAAAA or #ddCcdD -->
-                        <xs:pattern value="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"/>
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:element>
-
-            <!-- Image filter URL. -->
-            <xs:element name="image" type="xs:anyURI" minOccurs="0"/>
-
-            <!-- For range filters only. -->
-            <xs:element name="parameters" type="range" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>
