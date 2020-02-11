@@ -263,7 +263,22 @@
                                     <xs:element name="weight" type="xs:decimal" minOccurs="0"/>
 
                                     <!-- For filters other than range filters. -->
-                                    <xs:element name="frequency" type="xs:nonNegativeInteger" minOccurs="0" />
+                                    <xs:element name="frequency">
+                                        <xs:complexType>
+                                            <xs:simpleContent>
+                                                <xs:extension base="xs:nonNegativeInteger">
+                                                <xs:attribute name="type">
+                                                    <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:enumeration value="absolute" />
+                                                        <xs:enumeration value="additive" />
+                                                    </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:attribute>
+                                                </xs:extension>
+                                            </xs:simpleContent>
+                                        </xs:complexType>
+                                    </xs:element>
 
                                     <!-- Category filters may have subfilters -->
                                     <xs:element name="items" minOccurs="0" maxOccurs="unbounded">
