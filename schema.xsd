@@ -80,7 +80,7 @@
                 <!-- URL of a promotion and its image, in case the query matches a configured one. -->
                 <xs:element name="promotion" minOccurs="0">
                     <xs:complexType>
-                        <xs:attribute name="link" type="xs:anyURI"/>
+                        <xs:attribute name="link" type="urlOrPath"/>
                         <xs:attribute name="image" type="xs:anyURI"/>
                     </xs:complexType>
                 </xs:element>
