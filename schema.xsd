@@ -146,7 +146,7 @@
 
     <xs:simpleType name="urlOrPath">
         <xs:restriction base="xs:string">
-            <xs:pattern value="https?://|/"/>
+            <xs:pattern value="(https?://|/).*"/>
             <xs:minLength value="1"/>
         </xs:restriction>
     </xs:simpleType>
