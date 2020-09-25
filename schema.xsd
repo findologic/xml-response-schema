@@ -73,14 +73,14 @@
                 <!-- URL to a landingpage, in case the query matches a configured one. -->
                 <xs:element name="landingPage" minOccurs="0">
                     <xs:complexType>
-                        <xs:attribute name="link" type="xs:anyURI"/>
+                        <xs:attribute name="link" type="urlOrPath"/>
                     </xs:complexType>
                 </xs:element>
 
                 <!-- URL of a promotion and its image, in case the query matches a configured one. -->
                 <xs:element name="promotion" minOccurs="0">
                     <xs:complexType>
-                        <xs:attribute name="link" type="xs:anyURI"/>
+                        <xs:attribute name="link" type="urlOrPath"/>
                         <xs:attribute name="image" type="xs:anyURI"/>
                     </xs:complexType>
                 </xs:element>
@@ -140,6 +140,13 @@
     <xs:simpleType name="server">
         <xs:restriction base="xs:string">
             <xs:pattern value="[a-z0-9.]+"/>
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="urlOrPath">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(https?://|/).*"/>
             <xs:minLength value="1"/>
         </xs:restriction>
     </xs:simpleType>
